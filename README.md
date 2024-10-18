@@ -3,7 +3,6 @@
 ## Descripción
 Este proyecto es una API desarrollada en .NET 8 que implementa un CRUD para el mantenimiento de vehículos y vendedores. La arquitectura del proyecto sigue los principios de Clean Architecture y utiliza CQRS (Command Query Responsibility Segregation) para separar las operaciones de lectura y escritura. Además, se han implementado inyección de dependencias, validaciones con FluentValidation y mapeo de objetos con AutoMapper.
 
-**Nota**: Si clonas este repositorio, debes agregar tu propia cadena de conexión a la base de datos SQL Server en `appsettings.json`.
 
 ## Características
 - **CRUD Completo**: Operaciones de creación, lectura, actualización y eliminación para vehículos y vendedores.
