@@ -9,6 +9,7 @@ using Vehicles.Application.Exceptions;
 using Vehicles.Application.Features;
 using Vehicles.Application.Utilities;
 using Vehicles.Domain.Enums;
+using Vehicles.Domain.Models;
 
 namespace Vehicles.API.Controllers
 {
@@ -31,7 +32,7 @@ namespace Vehicles.API.Controllers
         /// <returns>Response to the request.</returns>
         [HttpPost("Create")]
         [ProducesResponseType(StatusCodes.Status201Created, Type = typeof(CreateVehicleModel))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ResponseApiService))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(BaseResponseModel))]
         public async Task<IActionResult> Create(
             [FromBody] CreateVehicleModel vehicleModel,
             [FromServices] ICreateVehicleCommand createVehicleCommand,
@@ -58,8 +59,8 @@ namespace Vehicles.API.Controllers
         /// <returns>Response to the request.</returns>
         [HttpPut("Update")]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UpdateVehicleModel))]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ResponseApiService))]
-        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ResponseApiService))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(BaseResponseModel))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(BaseResponseModel))]
         public async Task<IActionResult> Update
             (
                 [FromBody] UpdateVehicleModel updateVehicleModel,
@@ -75,7 +76,7 @@ namespace Vehicles.API.Controllers
 
             var entity = await getVehicleByIdQuery.Execute(updateVehicleModel.Id);
             if (entity == null)
-                return base.StatusCode(statusCode: StatusCodes.Status404NotFound,
+                return StatusCode(statusCode: StatusCodes.Status404NotFound,
                     value: ResponseApiService.Response(statusCode: StatusCodes.Status404NotFound,
                     message: EnumsExtensions.GetDisplayName(ErrorMessages.VehicleNotFound)));
 
@@ -91,19 +92,19 @@ namespace Vehicles.API.Controllers
         /// <param name="deleteVehicleCommand">Command to execute the vehicle deletion.</param>
         /// <returns>Response to the request.</returns>
         [HttpDelete("Delete/{vehicleId}")]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ResponseApiService))]
-        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ResponseApiService))]
-        [ProducesResponseType(StatusCodes.Status204NoContent, Type = typeof(ResponseApiService))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(BaseResponseModel))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(BaseResponseModel))]
+        [ProducesResponseType(StatusCodes.Status204NoContent)]
         public async Task<IActionResult> Delete(Guid vehicleId, [FromServices] IDeleteVehicleCommand deleteVehicleCommand)
         {
             if (vehicleId == Guid.Empty)
-                return base.StatusCode(statusCode: StatusCodes.Status400BadRequest,
+                return StatusCode(statusCode: StatusCodes.Status400BadRequest,
                     value: ResponseApiService.Response(statusCode: StatusCodes.Status400BadRequest,
                     message: EnumsExtensions.GetDisplayName(ErrorMessages.VehicleIdCannotBeNull)));
 
             var result = await deleteVehicleCommand.Execute(vehicleId);
             if (!result)
-                return base.StatusCode(statusCode: StatusCodes.Status404NotFound,
+                return StatusCode(statusCode: StatusCodes.Status404NotFound,
                     value: ResponseApiService.Response(statusCode: StatusCodes.Status404NotFound,
                     message: EnumsExtensions.GetDisplayName(ErrorMessages.VehicleNotFound)));
 
@@ -118,19 +119,19 @@ namespace Vehicles.API.Controllers
         /// <param name="getVehicleByIdQuery">Query to get vehicle information by its ID.</param>
         /// <returns>Response to the request.</returns>
         [HttpGet("Get-by-Id/{vehicleId}")]
-        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(ResponseApiService))]
-        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(ResponseApiService))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(BaseResponseModel))]
+        [ProducesResponseType(StatusCodes.Status404NotFound, Type = typeof(BaseResponseModel))]
         [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(GetVehicleByIdModel))]
         public async Task<IActionResult> GetById(Guid vehicleId, [FromServices] IGetVehicleByIdQuery getVehicleByIdQuery)
         {
             if (vehicleId == Guid.Empty)
-                return base.StatusCode(statusCode: StatusCodes.Status400BadRequest,
+                return StatusCode(statusCode: StatusCodes.Status400BadRequest,
                     value: ResponseApiService.Response(statusCode: StatusCodes.Status400BadRequest,
                     message: EnumsExtensions.GetDisplayName(ErrorMessages.VehicleIdCannotBeNull)));
 
             var data = await getVehicleByIdQuery.Execute(vehicleId);
             if (data == null)
-                return base.StatusCode(statusCode: StatusCodes.Status404NotFound,
+                return StatusCode(statusCode: StatusCodes.Status404NotFound,
                     value: ResponseApiService.Response(statusCode: StatusCodes.Status404NotFound,
                     message: EnumsExtensions.GetDisplayName(ErrorMessages.VehicleNotFound)));
 
